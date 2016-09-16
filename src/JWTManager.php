@@ -27,6 +27,11 @@ class JWTManager
      * @var boolean
      */
     protected $blacklistEnabled = true;
+    
+    /**
+     * @var boolean
+     */
+    protected $refreshFlow = false;
 
     /**
      *  @param \Tymon\JWTAuth\Providers\JWT\JWTInterface  $jwt
@@ -64,7 +69,7 @@ class JWTManager
     {
         $payloadArray = $this->jwt->decode($token->get());
 
-        $payload = $this->payloadFactory->make($payloadArray);
+        $payload = $this->payloadFactory->setRefreshFlow($this->refreshFlow)->make($payloadArray);
 
         if ($this->blacklistEnabled && $this->blacklist->has($payload)) {
             throw new TokenBlacklistedException('The token has been blacklisted');
@@ -81,7 +86,7 @@ class JWTManager
      */
     public function refresh(Token $token)
     {
-        $payload = $this->decode($token);
+        $payload = $this->setRefreshFlow()->decode($token);
 
         if ($this->blacklistEnabled) {
             // invalidate old token
@@ -153,4 +158,17 @@ class JWTManager
 
         return $this;
     }
+    
+    /**
+     * Set the refresh flow
+     *
+     * @param boolean $refreshFlow
+     * @return $this
+     */
+    public function setRefreshFlow($refreshFlow = true)
+    {
+        $this->refreshFlow = $refreshFlow;
+        return $this;
+    }
+    
 }
