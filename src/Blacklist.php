@@ -29,12 +29,6 @@ class Blacklist
     {
         $exp = Utils::timestamp($payload['exp']);
 
-        // there is no need to add the token to the blacklist
-        // if the token has already expired
-        if ($exp->isPast()) {
-            return false;
-        }
-
         // add a minute to abate potential overlap
         $minutes = $exp->diffInMinutes(Utils::now()->subMinute());
 
