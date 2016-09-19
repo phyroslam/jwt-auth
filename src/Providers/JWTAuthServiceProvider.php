@@ -219,7 +219,8 @@ class JWTAuthServiceProvider extends ServiceProvider
     protected function registerJWTBlacklist()
     {
         $this->app['tymon.jwt.blacklist'] = $this->app->share(function ($app) {
-            return new Blacklist($app['tymon.jwt.provider.storage']);
+            return new Blacklist($app['tymon.jwt.provider.storage'])
+                        ->setRefreshTTL($this->config('refresh_ttl'));
         });
     }
 
@@ -229,7 +230,9 @@ class JWTAuthServiceProvider extends ServiceProvider
     protected function registerPayloadValidator()
     {
         $this->app['tymon.jwt.validators.payload'] = $this->app->share(function () {
-            return with(new PayloadValidator)->setRequiredClaims($this->config('required_claims'));
+            return with(new PayloadValidator)
+                    ->setRefreshTTL($this->config('refresh_ttl'))
+                    ->setRequiredClaims($this->config('required_claims'));
         });
     }
 
