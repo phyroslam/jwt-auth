@@ -37,7 +37,7 @@ class Blacklist
         $exp = Utils::timestamp($payload['exp']);
 
         $this->storage->add(
-            $this->getKey($payload),
+            $payload['jti'],
             [],
             $this->getMinutesUntilExpired($payload)
         );
